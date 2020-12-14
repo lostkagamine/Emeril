@@ -10,6 +10,7 @@ export default class DiscordMessage {
     public channel?: DiscordTextableChannel;
     public content: string;
     public author: DiscordUser | DiscordWebhook;
+    public safeAuthor?: DiscordUser;
     public member?: DiscordMember;
     public guild?: DiscordGuild;
 
@@ -17,7 +18,9 @@ export default class DiscordMessage {
         if (d.webhook_id) {
             this.author = new DiscordWebhook(d.author);
         } else {
-            this.author = new DiscordUser(d.author);
+            let h: DiscordUser = new DiscordUser(d.author);
+            this.author = h;
+            this.safeAuthor = h;
         }
 
         if (channel && channel.guild) {

@@ -53,6 +53,9 @@ export default class DiscordGuild {
 
     public async getMember(id: string) {
         try {
+            let cache = this.members.get(id);
+            if (cache) return cache;
+
             let api = await this.client.callAPI(`guilds/${this.id}/members/${id}`, 'get');
             let m = new DiscordMember(api.data.user, this, this.client);
             this.members.update(m);

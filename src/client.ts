@@ -193,8 +193,16 @@ export class EmerilClient extends EventEmitter {
                 let chanid = edata.channel_id;
                 let chan = this.channels.get(chanid);
                 let ach = chan ? chan.asTextable() : null;
-
                 let msg = new DiscordMessage(edata, ach, this);
+
+                if (ach && ach.guild) {
+                    ach.guild.members.update(msg.member);
+                }
+
+                if (ach && ach.safeAuthor) {
+                    this.users.update(msg.safeAuthor);
+                }
+
                 this.emit('messageCreate', msg);    
 
                 break;
