@@ -6,7 +6,7 @@ Emeril is a **super-light-weight** library for interacting with [Discord](https:
 Emeril was written in a day by [Rin](https://kagamine-r.in), out of boredom.
 
 ## How do I use Emeril?
-There's no npm package ~~yet~~, but after installing the library, you can do this:
+[Install `emeril`](https://npmjs.com/package/emeril), then use this example:
 ```ts
 import {EmerilClient} from 'emeril';
 
