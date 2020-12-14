@@ -7,7 +7,7 @@
     "test": "yarn tsc && node dist/testApp"
   },
   "author": "Rin",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "dependencies": {
     "axios": "^0.21.0",
     "ws": "^7.4.1"
