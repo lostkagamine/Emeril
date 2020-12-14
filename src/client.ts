@@ -9,6 +9,7 @@ import DiscordUser from './models/user';
 import DiscordGuild from './models/guild';
 import DiscordChannel from './models/channel';
 import DiscordMessage from './models/message';
+import Collection from './collection';
 
 // @ts-ignore ts(80005)
 const pkg: any = require('../package.json');
@@ -28,6 +29,10 @@ interface EmerilConnectionInfo {
 
 const VERBOSE = true;
 
+/**
+ * The main interface between you and Emeril.
+ * @extends EventEmitter
+ */
 export class EmerilClient extends EventEmitter {
     private _gatewayCache: string; 
 
@@ -44,9 +49,9 @@ export class EmerilClient extends EventEmitter {
 
     public me: DiscordUser;
 
-    public guilds: DiscordGuild[] = [];
-    public channels: DiscordChannel[] = [];
-    public users: DiscordUser[] = [];
+    public guilds: Collection<DiscordGuild> = new Collection<DiscordGuild>();
+    public channels: Collection<DiscordChannel> = new Collection<DiscordChannel>();
+    public users: Collection<DiscordUser> = new Collection<DiscordUser>();
 
     public options: any = {};
 
@@ -163,7 +168,10 @@ export class EmerilClient extends EventEmitter {
         switch (event) {
             case 'READY':
                 this.me = new DiscordUser(edata.user);
-                this.guilds = edata.guilds.map((e:any) => DiscordGuild.createUnavailableGuild(e.id));
+                for (let e of edata.guilds) {
+                    let g = DiscordGuild.createUnavailableGuild(e.id);
+                    this.guilds.update(g);
+                }
 
                 this.emit('ready');
                 
@@ -173,22 +181,17 @@ export class EmerilClient extends EventEmitter {
             case 'GUILD_CREATE':
                 let g = new DiscordGuild(edata, this);
                 
-                let existing = this.guilds.find(e => e.id === g.id);
-                if (!existing) {
-                    this.guilds.push(g);
-                } else {
-                    this.guilds[this.guilds.indexOf(existing)] = g;
-                }
+                this.guilds.update(g);
 
                 for (let i of g.channels) {
-                    this.channels.push(i);
+                    this.channels.update(i[1]);
                 }
 
                 if (VERBOSE) console.log(`[Emeril] GUILD_CREATE: ${g.name}`)
                 break;
             case 'MESSAGE_CREATE':
                 let chanid = edata.channel_id;
-                let chan = this.channels.find(e => e.id === chanid);
+                let chan = this.channels.get(chanid);
                 let ach = chan ? chan.asTextable() : null;
 
                 let msg = new DiscordMessage(edata, ach, this);

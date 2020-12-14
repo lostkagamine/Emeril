@@ -1,4 +1,5 @@
 import { EmerilClient } from "..";
+import Collection from "../collection";
 import DiscordChannel from "./channel";
 import DiscordMember from "./member";
 import DiscordRole from "./role";
@@ -7,9 +8,9 @@ export default class DiscordGuild {
     public id: string;
     public name: string;
     public icon: string;
-    public roles: DiscordRole[];
-    public channels: DiscordChannel[];
-    public members: DiscordMember[];
+    public roles: Collection<DiscordRole>;
+    public channels: Collection<DiscordChannel>;
+    public members: Collection<DiscordMember>;
     public client: EmerilClient;
 
     public available: boolean;
@@ -18,16 +19,22 @@ export default class DiscordGuild {
         this.id = d.id;
         this.name = d.name;
         this.icon = d.icon;
+        this.roles = new Collection<DiscordRole>();
+        this.channels = new Collection<DiscordChannel>();
+        this.members = new Collection<DiscordMember>();
+        this.client = client ?? null;
+
         if (client) {
-            this.roles = d.roles.map((e:any) => new DiscordRole(e, this));
-            this.channels = d.channels.map((e:any) => new DiscordChannel(e, client, this));
-            this.members = d.members.map((e:any) => new DiscordMember(e.user, this, client));
+            for (let e of d.roles) {
+                this.roles.add(new DiscordRole(e, this));
+            }
+            for (let e of d.channels) {
+                this.channels.add(new DiscordChannel(e, client, this));
+            }
+            for (let e of d.members) {
+                this.members.add(new DiscordMember(e, this, client));
+            }
             this.client = client;
-        } else {
-            this.roles = [];
-            this.channels = [];
-            this.members = [];
-            this.client = null;
         }
     }
 
@@ -46,14 +53,9 @@ export default class DiscordGuild {
 
     public async getMember(id: string) {
         try {
-            let h = this.members.find(e => e.id === id);
-            if (h) {
-               return h; 
-            }
-
             let api = await this.client.callAPI(`guilds/${this.id}/members/${id}`, 'get');
             let m = new DiscordMember(api.data.user, this, this.client);
-            this.members.push(m);
+            this.members.update(m);
             return m;
         } catch(e) {
             // TODO: make this do something useful
