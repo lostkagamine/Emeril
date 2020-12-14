@@ -2,9 +2,11 @@
   "name": "emeril",
   "version": "0.0.1",
   "description": "another discord library",
-  "main": "index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "test": "yarn tsc && node dist/testApp"
+    "test": "yarn tsc && node dist/testApp",
+    "prepublish": "yarn tsc"
   },
   "author": "Rin",
   "license": "MIT",
