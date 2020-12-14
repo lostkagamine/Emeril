@@ -14,3 +14,6 @@ import {EmerilClient} from 'emeril';
 let client = await new EmerilClient().setToken('TOKEN_HERE').connect();
 ```
 This is the simplest possible Emeril bot. It goes online and that's it.
+
+## Where'd the name come from?
+[No Man's Sky](https://nomanssky.gamepedia.com/Emeril).
