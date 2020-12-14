@@ -44,10 +44,16 @@ export default class DiscordGuild {
         return g;
     }
 
-    public async getMember(id: number) {
+    public async getMember(id: string) {
         try {
+            let h = this.members.find(e => e.id === id);
+            if (h) {
+               return h; 
+            }
+
             let api = await this.client.callAPI(`guilds/${this.id}/members/${id}`, 'get');
             let m = new DiscordMember(api.data.user, this, this.client);
+            this.members.push(m);
             return m;
         } catch(e) {
             // TODO: make this do something useful

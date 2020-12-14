@@ -46,6 +46,7 @@ export class EmerilClient extends EventEmitter {
 
     public guilds: DiscordGuild[] = [];
     public channels: DiscordChannel[] = [];
+    public users: DiscordUser[] = [];
 
     public options: any = {};
 
