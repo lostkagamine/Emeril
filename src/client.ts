@@ -27,7 +27,7 @@ interface EmerilConnectionInfo {
     heartbeatHandle: NodeJS.Timeout;
 }
 
-const VERBOSE = true;
+const VERBOSE = (process.env.EMERIL_DEBUG === "true");
 
 /**
  * The main interface between you and Emeril.
