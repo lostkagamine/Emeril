@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "test": "yarn tsc && node dist/testApp",
+    "test": "yarn tsc && node -r dotenv/config dist/testApp",
     "prepublish": "yarn tsc"
   },
   "author": "Rin",
