@@ -21,11 +21,18 @@ export default class DiscordMessage {
             let h: DiscordUser = new DiscordUser(d.author);
             this.author = h;
             this.safeAuthor = h;
+            if (channel && channel.guild) {
+                let m = channel.guild.members.get(d.author.id);
+                if (m) {
+                    this.member = m;
+                } else {
+                    channel.guild.getMember(d.author.id).then(e => {
+                        this.member = e;
+                    });
+                }
+            }
         }
 
-        if (channel && channel.guild) {
-            this.member = new DiscordMember(d.author, channel.guild, client);
-        }
         this.id = d.id;
         this.content = d.content;
         this.channel = channel;

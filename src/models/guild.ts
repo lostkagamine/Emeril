@@ -32,7 +32,7 @@ export default class DiscordGuild {
                 this.channels.add(new DiscordChannel(e, client, this));
             }
             for (let e of d.members) {
-                this.members.add(new DiscordMember(e, this, client));
+                this.members.add(new DiscordMember(e, this, client, d));
             }
             this.client = client;
         }
@@ -57,7 +57,7 @@ export default class DiscordGuild {
             if (cache) return cache;
 
             let api = await this.client.callAPI(`guilds/${this.id}/members/${id}`, 'get');
-            let m = new DiscordMember(api.data.user, this, this.client);
+            let m = new DiscordMember(api.data.user, this, this.client, api.data);
             this.members.update(m);
             return m;
         } catch(e) {

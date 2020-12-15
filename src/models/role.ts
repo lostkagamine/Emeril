@@ -22,7 +22,20 @@ export default class DiscordRole {
         this.guild = guild;
     }
 
+    /**
+     * Checks if the role has a certain permission.
+     * @param p A value from the Permission enum.
+     */
     public has(p: Permission): boolean {
         return (this.permissions & p) === 1;
+    }
+
+    /**
+     * Checks if the role can perform a certain action.
+     * Takes ADMINISTRATOR into account.
+     * @param p A value from the Permission enum.
+     */
+    public can(p: Permission): boolean {
+        return this.has(p) || this.has(Permission.ADMINISTRATOR);
     }
 }

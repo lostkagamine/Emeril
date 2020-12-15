@@ -195,7 +195,7 @@ export class EmerilClient extends EventEmitter {
                 let ach = chan ? chan.asTextable() : null;
                 let msg = new DiscordMessage(edata, ach, this);
 
-                if (ach && ach.guild) {
+                if (ach && ach.guild && msg.member) {
                     ach.guild.members.update(msg.member);
                 }
 
@@ -204,6 +204,13 @@ export class EmerilClient extends EventEmitter {
                 }
 
                 this.emit('messageCreate', msg);    
+
+                break;
+            case 'GUILD_MEMBER_UPDATE':
+                let guild = this.guilds.get(edata.guild_id);
+                if (!guild) break; // this shouldn't be a thing that happens tho
+
+                
 
                 break;
         }
