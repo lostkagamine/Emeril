@@ -21,6 +21,7 @@ export default class Collection<T extends Identifiable> extends Map {
         if (!item) {
             return this.add(obj);
         }
+        this.set(obj.id, obj);
     }
 
     /**
