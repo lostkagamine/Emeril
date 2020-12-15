@@ -2,6 +2,7 @@ import axios from "axios";
 import { EmerilClient, EmerilException } from "..";
 import { apiCall, DiscordChannelType } from "../constants";
 import DiscordGuild from "./guild";
+import DiscordInvite from "./invite";
 
 export default class DiscordChannel {
     public id: string;
@@ -31,5 +32,9 @@ export default class DiscordChannel {
 
         // I'm sorry, typescript has forced my hand
         return new (require('./textable').default)(this._d, this.client, this.guild);
+    }
+
+    public createInvite(maxAge: number = 0, maxUses: number = 0): Promise<DiscordInvite> {
+        return this.guild.createInvite(this, maxAge, maxUses);
     }
 }

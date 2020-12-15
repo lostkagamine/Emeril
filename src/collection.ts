@@ -56,4 +56,18 @@ export default class Collection<T extends Identifiable> extends Map {
         }
         return arr;
     }
+
+    /**
+     * Finds the first element in the Collection that makes Function return truthy.
+     * @param func The function to run.
+     * @returns {Object} The element.
+     */
+    public find(func: Function) {
+        for (let i of this.values()) {
+            if (func(i)) {
+                return i;
+            }
+        }
+        return null;
+    }
 }

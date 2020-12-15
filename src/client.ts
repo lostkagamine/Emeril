@@ -213,6 +213,14 @@ export class EmerilClient extends EventEmitter {
                 
 
                 break;
+            case 'GUILD_DELETE':
+                let thing = edata.id;
+                let g2 = this.guilds.get(thing);
+                if (VERBOSE) console.log(`[Emeril] GUILD_DELETE: ${g2.name}`)
+                if (g2) {
+                    this.guilds.remove(g2);
+                }
+                break;
         }
 
         if (this.connectionInfo.sequence !== null && data.s)

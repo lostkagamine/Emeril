@@ -3,6 +3,8 @@ import DiscordGuild from "./guild";
 import DiscordTextableChannel from "./textable";
 import DiscordUser from "./user";
 import DiscordRole from "./role";
+import { AxiosError } from "axios";
+import { EmerilException, handleAPIError, MissingPermissions } from "../misc";
 
 export default class DiscordMember extends DiscordUser {
     public guild: DiscordGuild;
@@ -27,20 +29,32 @@ export default class DiscordMember extends DiscordUser {
     }
 
     public async kick(): Promise<void> {
-        await this.client.callAPI(`guilds/${this.guild.id}/members/${this.id}`, 'delete', {});
+        try {
+            await this.client.callAPI(`guilds/${this.guild.id}/members/${this.id}`, 'delete', {});
+        } catch(e) {
+            handleAPIError(e);
+        }
     }
 
     public async ban(deleteMessageDays: number = 0, reason?: string): Promise<void> {
-        await this.client.callAPI(`guilds/${this.guild.id}/bans/${this.id}`, 'put', {
-            delete_message_days: deleteMessageDays,
-            reason: reason
-        });
+        try {
+            await this.client.callAPI(`guilds/${this.guild.id}/bans/${this.id}`, 'put', {
+                delete_message_days: deleteMessageDays,
+                reason: reason
+            });
+        } catch(e) {
+            handleAPIError(e);
+        }
     }
 
     private async _updateRoles() {
-        await this.client.callAPI(`guilds/${this.guild.id}/members/${this.id}`, 'patch', {
-            roles: this.roles.map(e => e.id)
-        });
+        try {
+            await this.client.callAPI(`guilds/${this.guild.id}/members/${this.id}`, 'patch', {
+                roles: this.roles.map(e => e.id)
+            });
+        } catch(e) {
+            handleAPIError(e);
+        }
 
         this.guild.members.update(this);
     }

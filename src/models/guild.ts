@@ -1,6 +1,9 @@
+import { AxiosError } from "axios";
 import { EmerilClient } from "..";
 import Collection from "../collection";
+import { EmerilException, handleAPIError, MissingPermissions } from "../misc";
 import DiscordChannel from "./channel";
+import DiscordInvite from "./invite";
 import DiscordMember from "./member";
 import DiscordRole from "./role";
 
@@ -63,6 +66,24 @@ export default class DiscordGuild {
         } catch(e) {
             // TODO: make this do something useful
             return null;
+        }
+    }
+
+    public async leave() {
+        await this.client.callAPI(`users/@me/guilds/${this.id}`, 'delete', {});
+    }
+
+    public async createInvite(ch: DiscordChannel, maxAge: number = 0, maxUses: number = 0): Promise<DiscordInvite> {
+        try {
+            let api = await this.client.callAPI(`channels/${ch.id}/invites`, 'post', {
+                max_age: maxAge,
+                max_uses: maxUses
+            })
+
+            let inv = new DiscordInvite(api.data, this, ch);
+            return inv;
+        } catch(e) {
+            handleAPIError(e);
         }
     }
 }
