@@ -28,6 +28,7 @@ interface EmerilConnectionInfo {
 }
 
 const VERBOSE = (process.env.EMERIL_DEBUG === "true");
+const SILENCE_ACKS = (process.env.EMERIL_SILENCE_ACKS === "true");
 
 /**
  * The main interface between you and Emeril.
@@ -147,7 +148,7 @@ export class EmerilClient extends EventEmitter {
                 await this.sendIdentify();
                 break;
             case GatewayOpcodes.HEARTBEAT_ACKNOWLEDGE:
-                if (VERBOSE) console.log('[Emeril] heartbeat ack received');
+                if (VERBOSE && !SILENCE_ACKS) console.log('[Emeril] heartbeat ack received');
                 break;
             case GatewayOpcodes.HEARTBEAT:
                 await this.doHeartbeat();
