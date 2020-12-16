@@ -1,15 +1,49 @@
 import { AxiosError } from "axios";
-import { EmerilException } from "..";
+import { EmerilClient, EmerilException } from "..";
+import Collection from "../collection";
 import { handleAPIError, MissingPermissions } from "../misc";
 import DiscordChannel from "./channel";
+import DiscordGuild from "./guild";
+import DiscordMessage from "./message";
 
 export default class DiscordTextableChannel extends DiscordChannel {
-    public async createMessage(data: string | object) {
+    public messages: Collection<DiscordMessage>;
+
+    constructor(d: any, client: EmerilClient, guild?: DiscordGuild) {
+        super(d, client, guild);
+        this.messages = new Collection<DiscordMessage>();
+    }
+
+    public async createMessage(data: string | object, quote?: DiscordMessage) {
+        let toSend: any = typeof(data) === 'string' ? {content: data} : data;
+        if (quote) {
+            toSend.message_reference = {
+                channel_id: this.id,
+                message_id: quote.id
+            };
+        }
+
         return this.client.callAPI(`channels/${this.id}/messages`,
                                        'post',
-                                       typeof(data) === 'string' ? {content: data} : data)
+                                       toSend)
                 .catch(e => {
                     handleAPIError(e);
                 });
+    }
+
+    public async getMessage(id: string): Promise<DiscordMessage> {
+        let cache = this.messages.get(id);
+        if (cache) {
+            return cache;
+        }
+
+        try {
+            let api: any = await this.client.callAPI(`channels/${this.id}/messages/${id}`, 'get', null);
+            let msg = new DiscordMessage(api.data, this, this.client);
+            this.messages.update(msg);
+            return msg;
+        } catch(e) {
+            handleAPIError(e);
+        }
     }
 }

@@ -22,7 +22,7 @@ export default class DiscordChannel {
         this.client = client;
     }
 
-    public asTextable(): any {
+    public makeTextable(): any {
         let textable = (this.type === DiscordChannelType.GUILD_TEXT) ||
                        (this.type === DiscordChannelType.DM) ||
                        (this.type === DiscordChannelType.GROUP_DM);
@@ -32,6 +32,14 @@ export default class DiscordChannel {
 
         // I'm sorry, typescript has forced my hand
         return new (require('./textable').default)(this._d, this.client, this.guild);
+    }
+
+    public asTextable(): any {
+        try {
+            return this.makeTextable();
+        } catch(e) {
+            return null;
+        }
     }
 
     public createInvite(maxAge: number = 0, maxUses: number = 0): Promise<DiscordInvite> {
