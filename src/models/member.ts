@@ -32,7 +32,7 @@ export default class DiscordMember extends DiscordUser {
         try {
             await this.client.callAPI(`guilds/${this.guild.id}/members/${this.id}`, 'delete', {});
         } catch(e) {
-            handleAPIError(e);
+            return Promise.reject(handleAPIError(e, this.client));
         }
     }
 
@@ -43,7 +43,7 @@ export default class DiscordMember extends DiscordUser {
                 reason: reason
             });
         } catch(e) {
-            handleAPIError(e);
+            return Promise.reject(handleAPIError(e, this.client));
         }
     }
 
@@ -53,7 +53,7 @@ export default class DiscordMember extends DiscordUser {
                 roles: this.roles.map(e => e.id)
             });
         } catch(e) {
-            handleAPIError(e);
+            return Promise.reject(handleAPIError(e, this.client));
         }
 
         this.guild.members.update(this);

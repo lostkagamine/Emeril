@@ -1,5 +1,6 @@
 import { GatewayIntents } from '../constants';
 import {EmerilClient} from '../index';
+import { MissingPermissions } from '../misc';
 import DiscordMessage from '../models/message';
 import {TOKEN} from './config';
 
@@ -23,8 +24,9 @@ async function test() {
         if (msg.content.startsWith('!!!!!eval') && msg.author.id === '190544080164487168') {
             let e = msg.content.slice(10);
             let h;
+            let wrapper = `(async () => {${e}})()`;
             try {
-                h = eval(e);
+                h = await eval(wrapper)
             } catch(e) {
                 return msg.channel.createMessage(`\`\`\`ts\n${e}\n\`\`\``)
             }
@@ -36,6 +38,13 @@ async function test() {
             await dmch.createMessage('boop');
         }
     })
+
+    client.on('error', async (err: any) => {
+        if (err instanceof MissingPermissions) {
+            console.log('missing perms')
+        }
+        console.log(`shit: ${err}`);
+    });
 }
 
 /*

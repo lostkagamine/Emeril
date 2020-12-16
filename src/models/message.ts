@@ -1,4 +1,5 @@
 import { EmerilClient } from "../client";
+import { handleAPIError } from "../misc";
 import DiscordGuild from "./guild";
 import DiscordMember from "./member";
 import DiscordTextableChannel from "./textable";
@@ -13,6 +14,7 @@ export default class DiscordMessage {
     public safeAuthor?: DiscordUser;
     public member?: DiscordMember;
     public guild?: DiscordGuild;
+    public client: EmerilClient;
 
     constructor(d: any, channel: DiscordTextableChannel = null, client: EmerilClient) {
         if (d.webhook_id) {
@@ -37,5 +39,14 @@ export default class DiscordMessage {
         this.content = d.content;
         this.channel = channel;
         this.guild = channel ? channel.guild : null;
+        this.client = client;
+    }
+
+    public async delete() {
+        try {
+            await this.client.callAPI(`channels/${this.channel.id}/messages/${this.id}`, 'delete', null);
+        } catch(e) {
+            return Promise.reject(handleAPIError(e, this.client));
+        }
     }
 }

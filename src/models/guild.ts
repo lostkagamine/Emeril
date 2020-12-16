@@ -83,7 +83,7 @@ export default class DiscordGuild {
             let inv = new DiscordInvite(api.data, this, ch);
             return inv;
         } catch(e) {
-            handleAPIError(e);
+            return Promise.reject(handleAPIError(e, this.client));
         }
     }
 }

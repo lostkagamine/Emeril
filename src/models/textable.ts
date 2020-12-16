@@ -14,7 +14,7 @@ export default class DiscordTextableChannel extends DiscordChannel {
         this.messages = new Collection<DiscordMessage>();
     }
 
-    public async createMessage(data: string | object, quote?: DiscordMessage) {
+    public async createMessage(data: string | object, quote?: DiscordMessage): Promise<DiscordMessage> {
         let toSend: any = typeof(data) === 'string' ? {content: data} : data;
         if (quote) {
             toSend.message_reference = {
@@ -22,13 +22,14 @@ export default class DiscordTextableChannel extends DiscordChannel {
                 message_id: quote.id
             };
         }
-
-        return this.client.callAPI(`channels/${this.id}/messages`,
-                                       'post',
-                                       toSend)
-                .catch(e => {
-                    handleAPIError(e);
-                });
+        
+        try {
+            let h: any = await this.client.callAPI(`channels/${this.id}/messages`, 'post', toSend);
+            let msg = new DiscordMessage(h.data, this, this.client);
+            return msg;
+        } catch(e) {
+            return Promise.reject(handleAPIError(e, this.client));
+        }
     }
 
     public async getMessage(id: string): Promise<DiscordMessage> {
@@ -43,7 +44,15 @@ export default class DiscordTextableChannel extends DiscordChannel {
             this.messages.update(msg);
             return msg;
         } catch(e) {
-            handleAPIError(e);
+            return Promise.reject(handleAPIError(e, this.client));
+        }
+    }
+
+    public async startTyping() {
+        try {
+            await this.client.callAPI(`channels/${this.id}/typing`, 'post', {});
+        } catch(e) {
+            return Promise.reject(handleAPIError(e, this.client));
         }
     }
 }
