@@ -34,8 +34,13 @@ async function test() {
         }
 
         if (msg.content === '!!!!!dmme') {
-            let dmch = await msg.member!!.dmChannel();
-            await dmch.createMessage('boop');
+            try {
+                let dmch = await msg.member!!.dmChannel();
+                await dmch.createMessage('boop');
+            } catch(e) {
+                await msg.channel.createMessage('something went wrong');
+                console.log(e);
+            }
         }
     })
 
