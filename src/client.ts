@@ -174,6 +174,7 @@ export class EmerilClient extends EventEmitter {
                     this.guilds.update(g);
                 }
 
+                this.state = EmerilState.READY;
                 this.emit('ready');
                 
                 if (VERBOSE) console.log(`[Emeril] Ready! Logged in successfully as ${this.me.username}#${this.me.discriminator}`);
@@ -231,9 +232,13 @@ export class EmerilClient extends EventEmitter {
     }
 
     private async onWebSocketClose(code: number, reason: string): Promise<void> {
-        console.log(`[Emeril] Websocket connection closed! Client is now dead. Code ${code}, reason ${reason}`);
         this.state = EmerilState.DEAD;
         clearInterval(this.connectionInfo.heartbeatHandle);
+        console.log(`[Emeril] Websocket connection closed! Code ${code}, reason ${reason}`);
+        if (code <= 4000) {
+            console.log('[Emeril] Attempting to reconnect...')
+            this.connect();
+        }
     }
 
     public async connect(): Promise<EmerilClient> {
@@ -242,6 +247,8 @@ export class EmerilClient extends EventEmitter {
         }
 
         let constructedURL = `${this._gatewayCache}?v=${GATEWAY_VERSION}&encoding=json`;
+
+        this.state = EmerilState.CONNECTING;
 
         this.wsConnection = new WebSocket(constructedURL);
         this.wsConnection.on('message', (data: WebSocket.Data) => {
