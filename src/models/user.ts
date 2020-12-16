@@ -7,7 +7,10 @@ export default class DiscordUser {
     public verified: boolean;
     public mfaEnabled: boolean;
 
+    public _d: any;
+
     constructor(u: any) {
+        this._d = u;
         this.username = u.username;
         this.discriminator = u.discriminator;
         this.verified = u.verified ?? false;

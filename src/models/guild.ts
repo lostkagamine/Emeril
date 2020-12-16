@@ -15,6 +15,7 @@ export default class DiscordGuild {
     public channels: Collection<DiscordChannel>;
     public members: Collection<DiscordMember>;
     public client: EmerilClient;
+    public botMember: DiscordMember;
 
     public available: boolean;
 
@@ -38,6 +39,10 @@ export default class DiscordGuild {
                 this.members.add(new DiscordMember(e, this, client, d));
             }
             this.client = client;
+
+            this.getMember(this.client.me.id).then(e => {
+                this.botMember = e;
+            })
         }
     }
 

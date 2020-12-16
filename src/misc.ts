@@ -21,8 +21,14 @@ export class EmerilException extends Error {
 export function handleAPIError(e: Error, c: EmerilClient) {
     let err = e as AxiosError;
     let res = err.response;
-    let data = res.data;
-    let the = new RESTException(data.message, data.code);
+    let the;
+    if (!err.response) {
+        // this is not an API error
+        the = e;
+    } else {
+        let data = res.data;
+        the = new RESTException(data.message, data.code);    
+    }
     
     c.emit('error', the);
 

@@ -28,9 +28,15 @@ export default class DiscordMessage {
                 if (m) {
                     this.member = m;
                 } else {
-                    channel.guild.getMember(d.author.id).then(e => {
-                        this.member = e;
-                    });
+                    if (d.author.id === client.me.id) {
+                        // it's the bot
+                        // idk what to do here
+                        if (channel.guild.botMember) {
+                            this.member = channel.guild.botMember;
+                        }
+                    } else {
+                        this.member = new DiscordMember(h._d, channel.guild, client, d.member);
+                    }
                 }
             }
         }
