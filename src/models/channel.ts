@@ -1,5 +1,6 @@
 import axios from "axios";
-import { EmerilClient, EmerilException } from "..";
+import {EmerilClient} from "..";
+import {EmerilException} from "../misc";
 import { apiCall, DiscordChannelType } from "../constants";
 import DiscordGuild from "./guild";
 import DiscordInvite from "./invite";

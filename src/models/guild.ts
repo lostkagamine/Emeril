@@ -1,7 +1,7 @@
 import { AxiosError } from "axios";
 import { EmerilClient } from "..";
 import Collection from "../collection";
-import { EmerilException, handleAPIError, MissingPermissions } from "../misc";
+import {handleAPIError} from "../misc";
 import DiscordChannel from "./channel";
 import DiscordInvite from "./invite";
 import DiscordMember from "./member";

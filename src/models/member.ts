@@ -4,7 +4,7 @@ import DiscordTextableChannel from "./textable";
 import DiscordUser from "./user";
 import DiscordRole from "./role";
 import { AxiosError } from "axios";
-import { EmerilException, handleAPIError, MissingPermissions } from "../misc";
+import {handleAPIError} from "../misc";
 
 export default class DiscordMember extends DiscordUser {
     public guild: DiscordGuild;

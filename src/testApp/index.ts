@@ -1,6 +1,6 @@
 import { GatewayIntents } from '../constants';
 import {EmerilClient} from '../index';
-import { MissingPermissions } from '../misc';
+import { RESTException } from '../misc';
 import DiscordMessage from '../models/message';
 import {TOKEN} from './config';
 
@@ -22,15 +22,32 @@ async function test() {
         }
 
         if (msg.content.startsWith('!!!!!eval') && msg.author.id === '190544080164487168') {
-            let e = msg.content.slice(10);
-            let h;
-            let wrapper = `(async () => {${e}})()`;
+            // let e = msg.content.slice(10);
+            // let h;
+            // let wrapper = `(async () => {${e}})()`;
+            // try {
+            //     h = await eval(wrapper)
+            // } catch(e) {
+            //     return msg.channel.createMessage(`\`\`\`ts\n${e}\n\`\`\``)
+            // }
+            // msg.channel.createMessage(`\`\`\`ts\n${h}\n\`\`\``);
+
+            let out = '```';
+            let code = msg.content.slice(10);
             try {
-                h = await eval(wrapper)
-            } catch(e) {
-                return msg.channel.createMessage(`\`\`\`ts\n${e}\n\`\`\``)
+                let func;
+                if (code.split('\n').length === 1) {
+                    func = eval(`async () => ${code}`);
+                } else {
+                    func = eval(`async () => { ${code} }`);
+                }
+                //func.bind(this);
+                out += await func();
+            } catch (e) {
+                out += e.stack;
             }
-            msg.channel.createMessage(`\`\`\`ts\n${h}\n\`\`\``);
+            out += '```';
+            await msg.channel.createMessage(out);
         }
 
         if (msg.content === '!!!!!dmme') {
@@ -45,9 +62,6 @@ async function test() {
     })
 
     client.on('error', async (err: any) => {
-        if (err instanceof MissingPermissions) {
-            console.log('missing perms')
-        }
         console.log(`shit: ${err}`);
     });
 }
