@@ -60,8 +60,11 @@ export default class DiscordMember extends DiscordUser {
     }
 
     public async addRole(role: DiscordRole) {
-        this.roles.push(role);
-        await this._updateRoles();
+        let ind = this.roles.indexOf(role);
+        if (ind === -1) {
+            this.roles.push(role);
+            await this._updateRoles();
+        }
     }
 
     public async removeRole(role: DiscordRole) {
